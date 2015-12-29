@@ -1,5 +1,5 @@
 <?php
-    
+
 /**
 * Bootstrap Trait
 *
@@ -23,7 +23,7 @@
 namespace Bootstrap\View\Helper;
 
 trait BootstrapTrait {
-    
+
     /**
      * Adds the given class to the element options
      *
@@ -51,15 +51,15 @@ trait BootstrapTrait {
         }
         return $options ;
     }
-    
+
     /**
-     * 
+     *
      * Add classes to options according to values of bootstrap-type and bootstrap-size for button.
-     * 
+     *
      * @param $options The initial options with bootstrap-type and/or bootstrat-size values
-     * 
+     *
      * @return The new options with class values (btn, and btn-* according to initial options)
-     * 
+     *
      */
     protected function _addButtonClasses ($options) {
         $type = $this->_extractOption('bootstrap-type', $options, $this->_defaultButtonType);
@@ -77,15 +77,15 @@ trait BootstrapTrait {
     }
 
     /**
-     * 
+     *
      * Extract options from $options, returning $default if $key is not found.
      *
-     * @param $key     The key to search for.
-     * @param $options The array from which to extract the value.
-     * @param $default The default value returned if the key is not found.
+     * @param $key     string The key to search for.
+     * @param $options array The array from which to extract the value.
+     * @param $default string The default value returned if the key is not found.
      *
      * @return mixed $options[$key] if $key is in $options, otherwize $default.
-     * 
+     *
     **/
     protected function _extractOption ($key, $options, $default = null) {
         if (isset($options[$key])) {

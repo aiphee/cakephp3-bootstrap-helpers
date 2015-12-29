@@ -1,5 +1,5 @@
 <?php
-    
+
 /**
 * Bootstrap Flash Helper
 *
@@ -75,12 +75,14 @@ class BootstrapFlashHelper extends FlashHelper {
         }
 
         $flash = $this->request->session()->read("Flash.$key");
+
         if (!is_array($flash)) {
             throw new \UnexpectedValueException(sprintf(
                 'Value for flash setting key "%s" must be an array.',
                 $key
             ));
         }
+
         foreach ($flash as &$message) {
         	if (in_array(basename($message['element']), $this->_bootstrapTemplates)) {
         		$message['element'] = 'Bootstrap.'.$message['element'];
