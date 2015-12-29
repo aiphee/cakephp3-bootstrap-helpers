@@ -83,14 +83,36 @@ class BootstrapPaginatorHelper extends PaginatorHelper {
         }
 
         if (isset($options['prev'])) {
-            $options['before'] .= $this->prev($options['prev']) ;
+            $title = $options['prev'] ;
+            $opts  = [] ;
+            if (is_array($title)) {
+                $title = $title['title'] ;
+                unset ($options['prev']['title']) ;
+                $opts  = $options['prev'] ;
+            }
+            $options['before'] .= $this->prev($title, $opts) ;
         }
 
         if (isset($options['next'])) {
-            $options['after'] = $this->next($options['next']).$options['after'] ;
+            $title = $options['next'] ;
+            $opts  = [] ;
+            if (is_array($title)) {
+                $title = $title['title'];
+                unset ($options['next']['title']);
+                $opts  = $options['next'];
+            }
+            $options['after'] = $this->next($title, $opts).$options['after'] ;
         }
                 
         return parent::numbers ($options) ;
+    }
+
+    public function prev ($title = '<< Previous', array $options = []) {
+        return $this->_easyIcon ('parent::prev', $title, $options);
+    }
+
+    public function next ($title = 'Next >>', array $options = []) {
+        return $this->_easyIcon ('parent::next', $title, $options);
     }
 
 
