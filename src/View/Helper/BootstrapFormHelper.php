@@ -24,7 +24,7 @@ namespace Bootstrap\View\Helper;
 
 use Cake\View\Helper\FormHelper;
 
-class BootstrapFormHelper extends FormHelper {
+	class BootstrapFormHelper extends FormHelper {
 
     use BootstrapTrait ;
 
@@ -585,17 +585,19 @@ class BootstrapFormHelper extends FormHelper {
         return parent::button($title, $this->_createButtonOptions($options)) ;
     }
 
-    /**
-     *
-     * Create & return a Twitter Like button group.
-     *
-     * @param $buttons The buttons in the group
-     * @param $options Options for div method
-     *
-     * Extra options:
-     *  - vertical true/false
-     *
-    **/
+		/**
+		 *
+		 * Create & return a Twitter Like button group.
+		 *
+		 * @param array $buttons The buttons in the group
+		 * @param array $options Options for div method
+		 *
+		 * Extra options:
+		 *  - vertical true/false
+		 *
+		 *
+		 * @return string
+		 */
     public function buttonGroup ($buttons, array $options = array()) {
         $vertical = $this->_extractOption('vertical', $options, false) ;
         unset($options['vertical']) ;
@@ -610,8 +612,8 @@ class BootstrapFormHelper extends FormHelper {
      *
      * Create & return a Twitter Like button toolbar.
      *
-     * @param $buttons The groups in the toolbar
-     * @param $options Options for div method
+     * @param array $buttons The groups in the toolbar
+     * @param array $options Options for div method
      *
     **/
     public function buttonToolbar (array $buttonGroups, array $options = array()) {
@@ -628,16 +630,17 @@ class BootstrapFormHelper extends FormHelper {
      *     $this->Html->dropdown($menu, [])
      *   ]);
      *
-     * @param $title The text in the button
-     * @param $menu HTML tags corresponding to menu options (which will be wrapped
-     * 		 into <li> tag). To add separator, pass 'divider'.
-     * @param $options Options for button
-     *
-     */
-    public function dropdownButton ($title, array $menu = [], array $options = []) {
+     * @param string $title   The text in the button
+     * @param array  $menu    HTML tags corresponding to menu options (which will be wrapped
+     *                        into <li> tag). To add separator, pass 'divider'.
+	 * @param array $options  Options for button
+	 *
+	 * @return string
+	 */
+		public function dropdownButton($title, array $menu = [], array $options = []) {
 
-        $options['type'] = false ;
-        $options['data-toggle'] = 'dropdown' ;
+			$options['type']        = false;
+			$options['data-toggle'] = 'dropdown' ;
         $options = $this->addClass($options, "dropdown-toggle") ;
 
         return $this->buttonGroup([

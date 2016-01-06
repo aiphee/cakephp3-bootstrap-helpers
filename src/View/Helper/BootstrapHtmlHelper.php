@@ -24,7 +24,7 @@ namespace Bootstrap\View\Helper;
 
 use Cake\View\Helper\HtmlHelper;
 
-class BootstrapHtmlHelper extends HtmlHelper {
+    class BootstrapHtmlHelper extends HtmlHelper {
 
     use BootstrapTrait ;
 
@@ -46,7 +46,7 @@ class BootstrapHtmlHelper extends HtmlHelper {
      *
      * Create a glyphicon or font awesome icon depending on $this->_useFontAwesome.
      *
-     * @param $icon Name of the icon.
+     * @param string $icon Name of the icon.
      *
     **/
     public function icon ($icon, $options = []) {
@@ -77,21 +77,23 @@ class BootstrapHtmlHelper extends HtmlHelper {
         return $this->tag('i', '', $options);
     }
 
-    /**
-     *
-     * Create a Twitter Bootstrap span label.
-     *
-     * @param text The label text
-     * @param type The label type (default, primary, success, warning, info, danger)
-     * @param options Options for span
-     *
-     * The second parameter may either be $type or $options (in this case, the third parameter
-     * is useless, and the label type can be specified in the $options array).
-     *
-     * Extra options
-     *  - type The type of the label (useless if $type specified)
-     *
-    **/
+        /**
+         *
+         * Create a Twitter Bootstrap span label.
+         *
+         * @param string    text The label text
+         * @param string    type    The label type (default, primary, success, warning, info, danger)
+         * @param array     options Options for span
+         *
+         * The second parameter may either be $type or $options (in this case, the third parameter
+         * is useless, and the label type can be specified in the $options array).
+         *
+         * Extra options
+         *  - type The type of the label (useless if $type specified)
+         *
+         *
+         * @return string
+     */
     public function label ($text, $type = 'default', $options = []) {
         if (is_string($type)) {
             $options['type'] = $type ;
@@ -282,7 +284,7 @@ class BootstrapHtmlHelper extends HtmlHelper {
         }
         $options = $this->addClass($options, 'dropdown-menu');
         $options['role'] = 'menu' ;
-        $options += ['tag' => 'div'];
+        $options += ['tag' => 'ul'];
         $tag = $options['tag'];
         unset($options['tag']);
         return $this->tag($tag, $output, $options) ;
@@ -317,6 +319,30 @@ class BootstrapHtmlHelper extends HtmlHelper {
         $rowsHtml .= '</div>';
         return $rowsHtml;
 
+    }
+
+
+    public function collapsible ($options) {
+        return <<<HTML
+        <div class="panel-group" id="{$options['outer_id']}" role="tablist" aria-multiselectable="true">
+			<div class="panel panel-default">
+				<div class="panel-heading" role="tab" id="headingOne">
+					<h4 class="panel-title">
+						<a role="button" data-toggle="collapse" data-parent="#{$options['outer_id']}" href="#{$options['inner_id']}"
+						   aria-expanded="{$options['expanded']}" aria-controls="collapseOne">
+							{$options['title']}
+						</a>
+					</h4>
+				</div>
+				<div id="{$options['inner_id']}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{$options['inner_id']}">
+					<div class="panel-body">
+						{$options['content']}
+					</div>
+				</div>
+			</div>
+		</div>
+
+HTML;
     }
 
 }

@@ -1,4 +1,4 @@
-<?php
+<?php //TODO odstranit, je v HTMLHelperu
 
 	/**
 	 * Bootstrap Progressbar Helper
