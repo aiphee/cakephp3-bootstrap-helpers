@@ -322,14 +322,42 @@ use Cake\View\Helper\HtmlHelper;
     }
 
 
+		/**
+		 * @param $options
+		 *
+		 * @return string
+		 *
+		 * - footer
+		 * - outer_id
+		 * - inner_id
+		 * - expanded
+		 * - title
+		 * - content
+		 */
     public function collapsible ($options) {
+        if(isset($options['footer'])) {
+        	$panelFooter = <<<HTML
+                <div class="panel-footer">{$options['footer']}</div>
+HTML;
+        }  else {
+        	$panelFooter = '';
+        }
+
         return <<<HTML
         <div class="panel-group" id="{$options['outer_id']}" role="tablist" aria-multiselectable="true">
 			<div class="panel panel-default">
-				<div class="panel-heading" role="tab" id="headingOne">
+				<div
+					class="panel-heading"
+					role="tab"
+					id="headingOne"
+					data-toggle="collapse"
+					data-parent="#{$options['outer_id']}"
+					data-target="#{$options['inner_id']}"
+					aria-expanded="{$options['expanded']}"
+					aria-controls="collapseOne"
+				>
 					<h4 class="panel-title">
-						<a role="button" data-toggle="collapse" data-parent="#{$options['outer_id']}" href="#{$options['inner_id']}"
-						   aria-expanded="{$options['expanded']}" aria-controls="collapseOne">
+						<a href="javaScript: void(0);">
 							{$options['title']}
 						</a>
 					</h4>
@@ -338,11 +366,46 @@ use Cake\View\Helper\HtmlHelper;
 					<div class="panel-body">
 						{$options['content']}
 					</div>
+					$panelFooter
 				</div>
 			</div>
 		</div>
-
 HTML;
+    }
+
+    public function panel ($options) {
+        $panelBody = <<<HTML
+        <div class="panel-body">
+            {$options['content']}
+        </div>
+HTML;
+
+        if(isset($options['content'])) {
+        	$panelHeading = <<<HTML
+                <div class="panel-heading">{$options['heading']}</div>
+HTML;
+        }  else {
+        	$panelHeading = '';
+        }
+
+
+        if(isset($options['footer'])) {
+        	$panelFooter = <<<HTML
+                <div class="panel-footer">{$options['footer']}</div>
+HTML;
+        }  else {
+        	$panelFooter = '';
+        }
+
+        return <<<HTML
+        <div class="panel panel-default">
+          $panelHeading
+          $panelBody
+          $panelFooter
+        </div>
+HTML;
+
+
     }
 
 }

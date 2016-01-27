@@ -22,7 +22,8 @@
 
 namespace Bootstrap\View\Helper;
 
-use Cake\View\Helper\FormHelper;
+use Cake\ORM\Table;
+	use Cake\View\Helper\FormHelper;
 
 	class BootstrapFormHelper extends FormHelper {
 
@@ -218,10 +219,10 @@ use Cake\View\Helper\FormHelper;
      * Unusable options:
      * 	- inputDefaults
      *
-     * @param $model The model corresponding to the form
-     * @param $options Options to customize the form
+     * @param Table $model The model corresponding to the form
+     * @param $options array Options to customize the form
      *
-     * @return The HTML tags corresponding to the openning of the form
+     * @return string HTML tags corresponding to the openning of the form
      *
     **/
     public function create($model = null, Array $options = array()) {
