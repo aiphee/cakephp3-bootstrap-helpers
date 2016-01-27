@@ -25,6 +25,13 @@ namespace Bootstrap\View\Helper;
 trait BootstrapTrait {
 
     /**
+     * Set to false to disable easy icon processing.
+     *
+     * @var boolean
+     */
+    public $easyIcon = true ;
+    
+    /**
      * Adds the given class to the element options
      *
      * @param array $options Array options/attributes to add a class to
@@ -119,6 +126,32 @@ trait BootstrapTrait {
         }
         return $type ;
     }
+    
+    /**
+     *
+     * Try to convert the specified $text to a bootstrap icon. The $text is converted if it matches
+     * a format "i:icon-name".
+     *
+     * @param $title     The text to convert.
+     * @param $converted If specified, will contains true if the text was converted, false otherwize.
+     *
+     * @return The icon element if the conversion was successful, otherwize $text.
+     *
+     * Note: This function will currently fail if the Html helper associated with the view is not 
+     * BootstrapHtmlHelper.
+     *
+    **/
+    protected function _makeIcon ($title, &$converted = false) {
+        $converted = false ;
+        if (!$this->easyIcon) {
+            return $title ;
+        }
+        if (preg_match('#^i:([a-zA-Z0-9\\-_]+)$#', $title, $matches)) {
+            $converted = true ;
+            $title = $this->_View->Html->icon($matches[1]);
+        }
+        return $title ;
+    }
 
     /**
      *
@@ -135,11 +168,11 @@ trait BootstrapTrait {
      *
     **/
     protected function _easyIcon ($callback, $title, $options) {
-        if (preg_match('#i:([a-zA-Z0-9\\-_]+)#', $title, $matches)) {
+        $title = $this->_makeIcon ($title, $converted);
+        if ($converted) {
             $options += [
                 'escape' => false
             ];
-            $title = $this->_View->Html->icon($matches[1]);
         }
         return call_user_func ($callback, $title, $options) ;
     }

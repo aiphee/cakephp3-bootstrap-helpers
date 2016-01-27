@@ -22,10 +22,9 @@
 
 namespace Bootstrap\View\Helper;
 
-use Cake\ORM\Table;
-	use Cake\View\Helper\FormHelper;
+use Cake\View\Helper\FormHelper;
 
-	class BootstrapFormHelper extends FormHelper {
+class BootstrapFormHelper extends FormHelper {
 
     use BootstrapTrait ;
 
@@ -55,33 +54,33 @@ use Cake\ORM\Table;
             'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
             'checkboxFormGroup' => '{{label}}',
             'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
-            'checkboxContainer' => '<div class="checkbox">{{content}}</div>',
+            'checkboxContainer' => '{{h_checkboxContainer_start}}<div class="checkbox">{{content}}</div>{{h_checkboxContainer_end}}',
             'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}',
-            'error' => '<span class="help-block error-message">{{content}}</span>',
+            'error' => '<span class="help-block error-message{{h_errorClass}}">{{content}}</span>',
             'errorList' => '<ul>{{content}}</ul>',
             'errorItem' => '<li>{{text}}</li>',
             'file' => '<input type="file" name="{{name}}" {{attrs}}>',
             'fieldset' => '<fieldset{{attrs}}>{{content}}</fieldset>',
             'formStart' => '<form{{attrs}}>',
             'formEnd' => '</form>',
-            'formGroup' => '{{label}}{{prepend}}{{input}}{{append}}',
+            'formGroup' => '{{label}}{{h_formGroup_start}}{{prepend}}{{input}}{{append}}{{h_formGroup_end}}',
             'hiddenBlock' => '<div style="display:none;">{{content}}</div>',
-            'input' => '<input type="{{type}}" name="{{name}}" class="form-control {{attrs.class}}" {{attrs}} />',
+            'input' => '<input type="{{type}}" name="{{name}}" class="form-control{{attrs.class}}" {{attrs}} />',
             'inputSubmit' => '<input type="{{type}}"{{attrs}}>',
             'inputContainer' => '<div class="form-group {{type}}{{required}}">{{content}}</div>',
             'inputContainerError' => '<div class="form-group has-error {{type}}{{required}}">{{content}}{{error}}</div>',
-            'label' => '<label class="control-label {{attrs.class}}" {{attrs}}>{{text}}</label>',
+            'label' => '<label class="{{s_labelClass}}{{h_labelClass}}{{attrs.class}}" {{attrs}}>{{text}}</label>',
             'nestingLabel' => '{{hidden}}<label{{attrs}}>{{input}}{{text}}</label>',
             'legend' => '<legend>{{text}}</legend>',
             'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
             'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
-            'select' => '<select name="{{name}}" class="form-control {{attrs.class}}" {{attrs}}>{{content}}</select>',
-            'selectMultiple' => '<select name="{{name}}[]" multiple="multiple" class="form-control {{attrs.class}}" {{attrs}}>{{content}}</select>',
+            'select' => '<select name="{{name}}" class="form-control{{attrs.class}}" {{attrs}}>{{content}}</select>',
+            'selectMultiple' => '<select name="{{name}}[]" multiple="multiple" class="form-control{{attrs.class}}" {{attrs}}>{{content}}</select>',
             'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
             'radioWrapper' => '<div class="radio">{{label}}</div>',
-            'radioContainer' => '<div class="form-group">{{content}}</div>',
-            'textarea' => '<textarea name="{{name}}" class="form-control {{attrs.class}}" {{attrs}}>{{value}}</textarea>',
-            'submitContainer' => '<div class="form-group">{{content}}</div>',
+            'radioContainer' => '{{h_radioContainer_start}}<div class="form-group">{{content}}</div>{{h_radioContainer_end}}',
+            'textarea' => '<textarea name="{{name}}" class="form-control{{attrs.class}}" {{attrs}}>{{value}}</textarea>',
+            'submitContainer' => '<div class="form-group">{{h_submitContainer_start}}{{content}}{{h_submitContainer_end}}</div>',
         ]
     ];
 
@@ -130,8 +129,8 @@ use Cake\ORM\Table;
      */
     protected $_defaultColumnSize = [
         'label' => 2,
-        'input' => 6,
-        'error' => 4
+        'input' => 10,
+        'error' => 0
     ];
 
     private $buttonTypes = ['default', 'primary', 'info', 'success', 'warning', 'danger', 'link'] ;
@@ -187,24 +186,47 @@ use Cake\ORM\Table;
         return strpos($html, '<button') !== FALSE || strpos($html, 'type="submit"') !== FALSE ;
     }
 
-    /**
-     *
-     * Set the default templates according to the inner properties of the form ($this->horizontal and $this->inline).
-     *
-    **/
-    protected function _setDefaultTemplates () {
-        $this->templates([
-            'formGroup' => '{{label}}'.($this->horizontal ? '<div class="'.$this->_getColClass('input').'">' : '').'{{prepend}}{{input}}{{append}}'.($this->horizontal ? '</div>' : ''),
-            'checkboxContainer' => ($this->horizontal ? '<div class="form-group"><div class="'.$this->_getColClass('label', true).' '.$this->_getColClass('input').'">' : '')
-                        .'<div class="checkbox">{{content}}</div>'
-                    .($this->horizontal ? '</div></div>' : ''),
-            'radioContainer' => ($this->horizontal ? '<div class="form-group"><div class="'.$this->_getColClass('label', true).' '.$this->_getColClass('input').'">' : '')
-                        .'{{content}}'
-                    .($this->horizontal ? '</div></div>' : ''),
-            'label' => '<label class="'.($this->horizontal ? $this->_getColClass('label') : '').' '.($this->inline ? 'sr-only' : 'control-label').' {{attrs.class}}" {{attrs}}>{{text}}</label>',
-            'error' => '<span class="help-block '.($this->horizontal ? $this->_getColClass('error') : '').' error-message">{{content}}</span>',
-            'submitContainer' => '<div class="form-group">'.($this->horizontal ? '<div class="'.$this->_getColClass('label', true).' '.$this->_getColClass('input').'">' : '').'{{content}}'.($this->horizontal ? '</div>' : '').'</div>',
-        ]) ;
+    protected function _getDefaultTemplateVars (&$options) {
+        $options += [
+            'templateVars' => []
+        ];
+        $options['templateVars'] += [
+            's_labelClass' => 'control-label'
+        ];
+        if ($this->horizontal) {
+            $options['templateVars'] += [
+                'h_formGroup_start' => '<div class="'.$this->_getColClass('input').'">',
+                'h_formGroup_end'   => '</div>',
+                'h_checkboxContainer_start' => '<div class="form-group"><div class="'.$this->_getColClass('label', true)
+                    .' '.$this->_getColClass('input').'">',
+                'h_checkboxContainer_end' => '</div></div>',
+                'h_radioContainer_start' => '<div class="form-group"><div class="'.$this->_getColClass('label', true)
+                    .' '.$this->_getColClass('input').'">',
+                'h_radioContainer_end' => '</div></div>',
+                'h_submitContainer_start' => '<div class="'.$this->_getColClass('label', true).' '.$this->_getColClass('input').'">',
+                'h_submitContainer_end' => '</div>',
+                'h_labelClass' => ' '.$this->_getColClass('label'),
+                'h_errorClass' => ' '.$this->_getColClass('error')
+            ];
+        }
+        if ($this->inline) {
+            $options['templateVars']['s_labelClass'] = 'sr-only';
+        }
+        return $options;
+    }
+
+    public function formatTemplate($name, $data) {
+        return $this->templater()->format($name, $this->_getDefaultTemplateVars($data));
+    }
+
+    public function widget($name, array $data = []) {
+        return parent::widget($name, $this->_getDefaultTemplateVars($data));
+    }
+
+    protected function _inputContainerTemplate($options) {
+        return parent::_inputContainerTemplate(array_merge($options, [
+            'options' => $this->_getDefaultTemplateVars($options['options'])
+        ]));
     }
 
     /**
@@ -219,7 +241,7 @@ use Cake\ORM\Table;
      * Unusable options:
      * 	- inputDefaults
      *
-     * @param Table $model The model corresponding to the form
+     * @param String $model The model corresponding to the form
      * @param $options array Options to customize the form
      *
      * @return string HTML tags corresponding to the openning of the form
@@ -249,20 +271,8 @@ use Cake\ORM\Table;
             $options = $this->addClass($options, 'form-search') ;
         }
         $options['role'] = 'form' ;
-        $this->_setDefaultTemplates () ;
 	    return parent::create($model, $options) ;
     }
-
-    /**
-     *
-     * Switch horizontal mode on or off.
-     *
-    **/
-    public function setHorizontal ($horizontal) {
-        $this->horizontal = $horizontal ;
-        $this->_setDefaultTemplates () ;
-    }
-
 
     /**
      *
@@ -270,6 +280,9 @@ use Cake\ORM\Table;
      *
     **/
     protected function _getColClass ($what, $offset = false) {
+        if ($what === 'error' && isset($this->colSize['error']) && $this->colSize['error'] == 0) {
+            return $this->_getColClass('label', true).' '.$this->_getColClass('input');
+        }
         if (isset($this->colSize[$what])) {
             return 'col-md-'.($offset ? 'offset-' : '').$this->colSize[$what] ;
         }
@@ -282,15 +295,22 @@ use Cake\ORM\Table;
         return implode(' ', $classes) ;
     }
 
-    public function prepend ($input, $prepend) {
-        if ($prepend) {
-            if (is_string($prepend)) {
-                $prepend = '<span class="input-group-'.($this->_matchButton($prepend) ? 'btn' : 'addon').'">'.$prepend.'</span>' ;
+    protected function _wrapInputGroup ($addonOrButtons) {
+        if ($addonOrButtons) {
+            if (is_string($addonOrButtons)) {
+                $addonOrButtons = $this->_makeIcon($addonOrButtons);
+                $addonOrButtons = '<span class="input-group-'.
+                    ($this->_matchButton($addonOrButtons) ? 'btn' : 'addon').'">'.$addonOrButtons.'</span>' ;
             }
-            else if ($prepend !== false) {
-                $prepend = '<span class="input-group-btn">'.implode('', $prepend).'</span>' ;
+            else if ($addonOrButtons !== false) {
+                $addonOrButtons = '<span class="input-group-btn">'.implode('', $addonOrButtons).'</span>' ;
             }
         }
+        return $addonOrButtons ;
+    }
+
+    public function prepend ($input, $prepend) {
+        $prepend = $this->_wrapInputGroup ($prepend);
         if ($input === null) {
             return '<div class="input-group">'.$prepend ;
         }
@@ -298,12 +318,7 @@ use Cake\ORM\Table;
     }
 
     public function append ($input, $append) {
-        if (is_string($append)) {
-            $append = '<span class="input-group-'.($this->_matchButton($append) ? 'btn' : 'addon').'">'.$append.'</span>' ;
-        }
-        else if ($append !== false) {
-            $append = '<span class="input-group-btn">'.implode('', $append).'</span>' ;
-        }
+        $append = $this->_wrapInputGroup($append);
         if ($input === null) {
             return $append.'</div>' ;
         }
@@ -355,7 +370,7 @@ use Cake\ORM\Table;
             $options['templates'] = [] ;
             if ($inline) {
                 $options['templates'] = [
-                    'label' => $this->templates('label').'<div></div>',
+                    'label' => $this->templates('label'),
                     'radioWrapper' => '{{label}}',
                     'nestingLabel' => '{{hidden}}<label{{attrs}} class="radio-inline">{{input}}{{text}}</label>'
                 ] ;
@@ -396,7 +411,7 @@ use Cake\ORM\Table;
             $data = array_merge($data, $options['options']['_data']);
             unset($options['options']['_data']);
         }
-        return $this->templater()->format($groupTemplate, $data);
+        return $this->formatTemplate($groupTemplate, $data);
     }
 
     /**
@@ -583,22 +598,21 @@ use Cake\ORM\Table;
      *
      */
     public function button($title, array $options = []) {
-        return parent::button($title, $this->_createButtonOptions($options)) ;
+        return $this->_easyIcon ('parent::button', $title, $this->_createButtonOptions($options));
     }
 
-		/**
-		 *
-		 * Create & return a Twitter Like button group.
-		 *
-		 * @param array $buttons The buttons in the group
-		 * @param array $options Options for div method
-		 *
-		 * Extra options:
-		 *  - vertical true/false
-		 *
-		 *
-		 * @return string
-		 */
+	/**
+	 *
+	 * Create & return a Twitter Like button group.
+	 *
+	 * @param array $buttons The buttons in the group
+	 * @param array $options Options for div method
+	 *
+	 * Extra options:
+	 *  - vertical true/false
+	 *
+	 * @return string
+	 */
     public function buttonGroup ($buttons, array $options = array()) {
         $vertical = $this->_extractOption('vertical', $options, false) ;
         unset($options['vertical']) ;
@@ -638,17 +652,16 @@ use Cake\ORM\Table;
 	 *
 	 * @return string
 	 */
-		public function dropdownButton($title, array $menu = [], array $options = []) {
+	public function dropdownButton($title, array $menu = [], array $options = []) {
 
-			$options['type']        = false;
-			$options['data-toggle'] = 'dropdown' ;
-        $options = $this->addClass($options, "dropdown-toggle") ;
+		$options['type']        = false;
+		$options['data-toggle'] = 'dropdown' ;
+		$options = $this->addClass($options, "dropdown-toggle") ;
 
-        return $this->buttonGroup([
-            $this->button($title.' <span class="caret"></span>', $options),
-            $this->bHtml->dropdown($menu)
-        ]);
-
+		return $this->buttonGroup([
+			$this->button($title.' <span class="caret"></span>', $options),
+			$this->bHtml->dropdown($menu)
+		]);
     }
 
     /**

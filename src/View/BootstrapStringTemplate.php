@@ -51,10 +51,11 @@ class BootstrapStringTemplate extends StringTemplate {
                 if (substr($placeholder, 0, 6) == 'attrs.'
                     && in_array('attrs.'.substr($placeholder, 6), $placeholders)
                     && preg_match('#'.substr($placeholder, 6).'="([^"]+)"#', $data['attrs'], $matches) > 0) {
-                    preg_replace('#'.substr($placeholder, 6).'="[^"]+"#', '', $data['attrs']);
-                    $data[$placeholder] = $matches[1];
+                    $data['attrs'] = preg_replace('#'.substr($placeholder, 6).'="[^"]+"#', '', $data['attrs']);
+                    $data[$placeholder] = ' '.trim($matches[1]);
                 }
             }
+            $data['attrs'] = ' '.trim($data['attrs']);
         }
         if ($template === null) {
             return '';
